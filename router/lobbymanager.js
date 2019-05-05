@@ -7,4 +7,12 @@ function LobbyManager(socketio) {
 
 }
 
+LobbyManager.prototype.makeLobby = function(socket) {
+	console.log('make lobby!!');
+}
+
+LobbyManager.prototype.joinLobby = function(socket, lobbyNum) {
+	console.log('make lobby!! ' + lobbyNum);
+}
+
 module.exports = LobbyManager;

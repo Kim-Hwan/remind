@@ -20,7 +20,7 @@ const server = http.createServer(app)
 const io = socket(server)
 
 // 로비매니저 불러오기 및 객체 생성
-const LobbyManager = require('./router/lobbymanager');
+var LobbyManager = require('./router/lobbymanager');
 var lobbyManager = new LobbyManager(io);
 
 app.use('/css', express.static('./static/css'))
@@ -54,6 +54,21 @@ io.sockets.on('connection', function(socket) {
 
   /* 전송한 메시지 받기 */
   socket.on('message', function(data) {
+
+    // 임시 로비생성 명령어 확인
+    if(data.message == '!make') {
+      console.log('새로운 로비 생성: ' + socket.id)
+      lobbyManager.makeLobby(socket);
+      return
+    }
+
+    // 임시 로비참가 명령어 확인
+    if(data.message.substring(0,5) == '!join') {
+      console.log('로비 참가: ' + socket.id + ', ' + Number(data.message.substring(6)))
+      lobbyManager.joinLobby(socket, Number(data.message.substring(6)));
+      return
+    }
+
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
     
@@ -101,7 +116,7 @@ db.once('open', function(){
 mongoose.connect('mongodb://localhost/remind');
 
 var Word = require('./models/word');
-var router = require('./router')(app, 'Book');
+//var router = require('./router')(app, 'Book');
 
 function Getaword(){
   Word.count(function(err, count){
