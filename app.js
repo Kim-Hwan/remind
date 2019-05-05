@@ -19,6 +19,10 @@ const server = http.createServer(app)
 /* 생성된 서버를 socket.io에 바인딩 */
 const io = socket(server)
 
+// 로비매니저 불러오기 및 객체 생성
+const LobbyManager = require('./router/lobbymanager');
+var lobbyManager = new LobbyManager(io);
+
 app.use('/css', express.static('./static/css'))
 app.use('/js', express.static('./static/js'))
 
@@ -97,7 +101,7 @@ db.once('open', function(){
 mongoose.connect('mongodb://localhost/remind');
 
 var Word = require('./models/word');
-//var router = require('./router')(app, Book);
+var router = require('./router')(app, 'Book');
 
 function Getaword(){
   Word.count(function(err, count){
