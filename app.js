@@ -19,16 +19,12 @@ const server = http.createServer(app)
 /* 생성된 서버를 socket.io에 바인딩 */
 const io = socket(server)
 
-// 로비매니저 불러오기 및 객체 생성
-var LobbyManager = require('./router/lobbymanager');
-var lobbyManager = new LobbyManager(io);
-
 app.use('/css', express.static('./static/css'))
 app.use('/js', express.static('./static/js'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
-  fs.readFile('./static/index.html', function(err, data) {
+  fs.readFile('./static/midtest.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
@@ -54,21 +50,6 @@ io.sockets.on('connection', function(socket) {
 
   /* 전송한 메시지 받기 */
   socket.on('message', function(data) {
-
-    // 임시 로비생성 명령어 확인
-    if(data.message == '!make') {
-      console.log('새로운 로비 생성: ' + socket.id)
-      lobbyManager.makeLobby(socket);
-      return
-    }
-
-    // 임시 로비참가 명령어 확인
-    if(data.message.substring(0,5) == '!join') {
-      console.log('로비 참가: ' + socket.id + ', ' + Number(data.message.substring(6)))
-      lobbyManager.joinLobby(socket, Number(data.message.substring(6)));
-      return
-    }
-
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
     
@@ -91,6 +72,12 @@ io.sockets.on('connection', function(socket) {
     /* 모든 소켓에게 전송 */
     io.sockets.emit('draw', data)
   })
+
+
+  testfunc = function(data){
+    io.sockets.emit('answer',data);
+  }
+
 
 
 })
@@ -116,7 +103,7 @@ db.once('open', function(){
 mongoose.connect('mongodb://localhost/remind');
 
 var Word = require('./models/word');
-//var router = require('./router')(app, 'Book');
+//var router = require('./router')(app, Book);
 
 function Getaword(){
   Word.count(function(err, count){
@@ -131,3 +118,76 @@ function Getaword(){
 }
 
 Getaword();
+
+const twitch = require('./router/twitchconfig');
+
+function connecttwitch(userid,roomid,answerword)
+{
+    var twitchclient = twitch.create(userid);
+
+  twitchclient.connect();
+
+
+  twitchclient.on('chat', (channel, userstate, message, self) => {
+    var user = userstate.username;
+    var msg = message.trim();
+    console.log(user + ':' + msg);
+    if (msg == answerword){
+      rooms['123'].answer(io,user + '님이 정답을 맞췄습니다!' + msg);
+      //some function with roomid
+      twitchclient.disconnect();
+    }
+    
+  });
+}
+
+
+var users = [];
+
+//users['3'] = connecttwitch('elded');
+//users['6'] = connecttwitch('thtl1999',345,'아메리카');
+
+
+const youtube = require('./router/youtubeconfig');
+
+function connectyoutube(videoid,roomid,answerword)
+{
+  youtube.create(videoid,function(config){
+
+    var lasttime = 0;
+
+    var intervalid = setInterval(function(){
+      youtube.getchat(config,lasttime,function(chatlist,t){
+      //console.log(chatlist);
+      //console.log(t);
+      lasttime = t;
+      chatlist.forEach(element => {
+        console.log(element.author + ':' + element.msg);
+        if (element.msg == answerword){
+          rooms['123'].answer(io,element.author + '님이 정답을 맞췄습니다!' + element.msg);
+          //somefunction with room id
+          clearInterval(intervalid);
+        }  
+      });
+
+      });
+    },2000)
+
+  });
+
+}
+
+//users['123'] = connectyoutube('YCDezUvIOUs',123,'아메리카');
+
+var rooms = [];
+rooms['123'] = require('./router/sockettest.js');
+
+
+/*
+setInterval(function(){
+  rooms['123'].answer(io,'asd');
+},1000)
+*/
+
+
+
