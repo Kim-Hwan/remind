@@ -9,9 +9,10 @@ socket.on('connect', function() {
   if(!name) {
     name = '익명'
   }
-
+ 
   /* 서버에 새로운 유저가 왔다고 알림 */
   socket.emit('newUser', name)
+
 })
 
 /* 서버로부터 데이터 받은 경우 */
@@ -58,6 +59,9 @@ function send() {
   msg.appendChild(node)
   chat.appendChild(msg)
 
+  //console.log(io.sockets.manager.rooms)
+
   // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message})
+  socket.emit('message', {type: 'message', message: message});
+  //socket.to('1234').emit('message', {type: 'message', message: message})
 }
