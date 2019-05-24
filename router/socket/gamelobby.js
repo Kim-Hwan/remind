@@ -5,14 +5,16 @@ function GameLobby(info) {
 
 
 	self.lobbyPW = info.lobbyPW;
-	self.lobbyNum = 0;
 	self.players = {};
 	self.host = info.host;
+
+	self.maxRound = info.maxRound;
+	self.maxTime = info.maxTime;
 
 	self.state = State.STATES.INIT;
 	self.roundNum = 0;
 
-	self.players[info.host] = info.host;
+	self.players[0] = info.host;
 
 }
 

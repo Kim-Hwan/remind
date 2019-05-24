@@ -1,7 +1,10 @@
 var socket = io()
+var lobbyPW = 0;
 
 /* 접속 되었을 때 실행 */
 socket.on('connect', function() {
+
+
   /* 이름을 입력받고 */
   var name = prompt('반갑습니다!', '')
 
@@ -43,6 +46,35 @@ socket.on('update', function(data) {
   chat.appendChild(message)
 })
 
+
+// 방만들기 버튼 클릭
+function makeLobby(Password) {
+  lobbyPW = Password
+  socket.emit('makeLobby', {type: 'makeLobby', PW: lobbyPW});
+  location.href = "/client/MakeRoom.html";
+}
+
+
+
+// 시작 버튼 클릭
+function joinLobby(Password) {
+  lobbyPW = Password
+  socket.emit('joinLobby', {type: 'joinLobby', PW: lobbyPW});
+}
+
+
+// 로그인 버튼 클릭
+function login() {
+
+}
+
+
+// 캐릭터 변경 화살표 버튼 클릭
+function changeCharacter() {
+
+
+}
+
 /* 메시지 전송 함수 */
 function send() {
   // 입력되어있는 데이터 가져오기
@@ -62,5 +94,5 @@ function send() {
   //console.log(io.sockets.manager.rooms)
 
   // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message});
+  socket.emit('message', {type: 'message', message: message, lobbyPW: lobbyPW});
 }

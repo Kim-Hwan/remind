@@ -1,23 +1,9 @@
 var socket = io()
-
-/* 접속 되었을 때 실행 */
-socket.on('connect', function() {
-  /* 이름을 입력받고 */
-  var name = prompt('반갑습니다!', '')
-
-  /* 이름이 빈칸인 경우 */
-  if(!name) {
-    name = '익명'
-  }
- 
-  /* 서버에 새로운 유저가 왔다고 알림 */
-  socket.emit('newUser', name)
-
-})
+var lobbyPW = 123;
 
 /* 서버로부터 데이터 받은 경우 */
 socket.on('update', function(data) {
-  var chat = document.getElementById('chat')
+  var chat = document.getElementById('chat1')
 
   var message = document.createElement('div')
   var node = document.createTextNode(`${data.name}: ${data.message}`)
@@ -38,13 +24,18 @@ socket.on('update', function(data) {
       break
   }
 
+  console.log(lobbyPW + "로 " + data.message + " 메세지가 도착했다.");
+
   message.classList.add(className)
   message.appendChild(node)
   chat.appendChild(message)
 })
 
+
 /* 메시지 전송 함수 */
-function send() {
+function send(message) {
+
+  /*
   // 입력되어있는 데이터 가져오기
   var message = document.getElementById('test').value
   
@@ -58,9 +49,9 @@ function send() {
   msg.classList.add('me')
   msg.appendChild(node)
   chat.appendChild(msg)
-
+  */
   //console.log(io.sockets.manager.rooms)
 
   // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message});
+  socket.emit('message', {type: 'message', message: message, lobbyPW: lobbyPW});
 }

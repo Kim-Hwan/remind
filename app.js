@@ -10,6 +10,11 @@ const http = require('http')
 /* Node.js 기본 내장 모듈 불러오기 */
 const fs = require('fs')
 
+// 추가
+const cookie = require('cookie');
+
+//const router = 
+
 /* express 객체 생성 */
 const app = express()
 
@@ -23,14 +28,27 @@ const io = socket(server)
 // 로비매니저 불러오기 및 객체 생성
 var LobbyManager = require('./router/socket/lobbymanager');
 var lobbyManager = new LobbyManager(io);
+
+// 데이터베이스 대체 배열
+var players = {};
+
 // 김환 소켓 수정
 
 app.use('/css', express.static('./static/css'))
 app.use('/js', express.static('./static/js'))
+app.use('/client', express.static('./static/client'))
+
+/*router.get('/', function(req, res, next) {
+
+  var cookie_id = req.cookies.userIDf;
+  console.log(cookie_id);
+   res.render('index', { title: 'Express' });
+});
+*/
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
-  fs.readFile('./static/index2.html', function(err, data) {
+  fs.readFile('./static/client/MainPage_character1.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
@@ -41,70 +59,69 @@ app.get('/', function(request, response) {
   })
 })
 
+
 io.sockets.on('connection', function(socket) {
 
-  /* 새로운 유저가 접속했을 경우 다른 소켓에게도 알려줌 */
+  // 쿠키
+  //var cookies = cookie.parse(socket.handshake.headers.cookie);
+  //console.log(socket.handshake.headers.cookie);
+
+
+  /* 새로운 유저가 접속 */
   socket.on('newUser', function(name) {
     
     console.log(name + ' 님이 접속하였습니다.')
 
     /* 소켓에 이름 저장해두기 */
     socket.name = name
+  })
 
-    /* 모든 소켓에게 전송 */
-    io.sockets.emit('update', {type: 'connect', name: 'SERVER', message: name + '님이 접속하였습니다.'})
+  // 방만들기 요청
+  socket.on('makeLobby', function(data) {
+    // 로비매니저에게 로비 생성 요청
+    lobbyManager.makeLobby(socket, {  PW: data.PW, 
+                                      maxRound: data.maxRound, 
+                                      maxtime: data.maxtime} )
+
+    // 클라이언트에게 페이지 업데이트 요청
+    socket.emit('nextPage', 'MakeRoom.html')
+  })
+
+  // 방참가 요청
+  socket.on('joinLobby', function(data) {
+    // 로비매니저에게 로비 참가 요청
+    if(lobbyManager.joinLobby(socket, data.PW) != -1)
+      socket.emit('nextPage', 'Game.html')
+
   })
 
   /* 전송한 메시지 받기 */
   socket.on('message', function(data) {
-
-    // 김환 소켓 수정
-    // 임시 로비생성 명령어 확인
-    if(data.message.substring(0,5) == '!make') {
-      console.log('새로운 로비 생성: ' + socket.id+ ', ' + Number(data.message.substring(6) ) )
-      lobbyManager.makeLobby(socket, Number(data.message.substring(6) ) );
-      return
-    }
-
-    // 임시 로비참가 명령어 확인
-    if(data.message.substring(0,5) == '!join') {
-      console.log('로비 참가: ' + socket.id + ', ' + Number(data.message.substring(6) ) )
-      lobbyManager.joinLobby(socket, Number(data.message.substring(6) ) );
-      return
-    }
-    // 김환 소켓 수정
-
 
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
     
     console.log(data)
 
-    /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
-    socket.broadcast.to(1234).emit('update', data);
-    //socket.broadcast.emit('update', data);
+    //socket.broadcast.to(data.lobbyPW).emit('update', data);
+    socket.broadcast.emit('update', data);
   })
 
   /* 접속 종료 */
   socket.on('disconnect', function() {
-    console.log(socket.name + '님이 나가셨습니다.')
-
-    /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
-    socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});
+    //console.log(socket.name + '님이 나가셨습니다.')
   })
 
   socket.on('draw', function(data) {
 
     /* 모든 소켓에게 전송 */
-    io.sockets.emit('draw', data)
+    io.sockets.to(data.lobbyPW).emit('draw', data)
   })
 
 
   testfunc = function(data){
     io.sockets.emit('answer',data);
   }
-
-
 
 })
 
