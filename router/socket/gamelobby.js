@@ -3,7 +3,6 @@ var State = require('./gamestates');
 function GameLobby(info) {
 	var self  = this;
 
-
 	self.lobbyPW = info.lobbyPW;
 	self.players = {};
 	self.host = info.host;

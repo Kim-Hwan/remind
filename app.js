@@ -12,7 +12,12 @@ const fs = require('fs')
 
 // 추가
 const cookie = require('cookie');
-
+const session = require("express-session")({
+    secret: "secretcodeofhwan",
+    resave: true,
+    saveUninitialized: true
+});
+var sharedsession = require("express-socket.io-session"); // socket io session 모듈
 //const router = 
 
 /* express 객체 생성 */
@@ -24,31 +29,39 @@ const server = http.createServer(app)
 /* 생성된 서버를 socket.io에 바인딩 */
 const io = socket(server)
 
-// 김환 소켓 수정
 // 로비매니저 불러오기 및 객체 생성
 var LobbyManager = require('./router/socket/lobbymanager');
 var lobbyManager = new LobbyManager(io);
 
 // 데이터베이스 대체 배열
-var players = {};
+var sessions = {};
+var tempPW = 0;
+var tempName = null;
 
-// 김환 소켓 수정
+/*
+// 세션 사용
+app.use(session({
+ // genid: function(req) {
+ //   return genuuid() // 기본값으로 쓰이는 UID 대신 UUID를 세션ID로 사용
+ // },
+  secret: 'secretcodeofhwan',
+  resave: true,
+  saveUninitialized: true
+}));*/
+
+app.use(session);
+
+io.use(sharedsession(session, {
+    autoSave:true
+})); 
 
 app.use('/css', express.static('./static/css'))
 app.use('/js', express.static('./static/js'))
-app.use('/client', express.static('./static/client'))
-
-/*router.get('/', function(req, res, next) {
-
-  var cookie_id = req.cookies.userIDf;
-  console.log(cookie_id);
-   res.render('index', { title: 'Express' });
-});
-*/
+app.use('/Logo', express.static('./static/Logo'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
-  fs.readFile('./static/client/MainPage_character1.html', function(err, data) {
+  fs.readFile('./static/MainPage_character1.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
@@ -60,6 +73,50 @@ app.get('/', function(request, response) {
 })
 
 
+//http://remindgame.com/Gamehtml
+app.get('/Game.html', function(request, response) {
+  fs.readFile('./static/Game.html', function(err, data) {
+    if(err) {
+      response.send('에러')
+    } else {
+      response.writeHead(200, {'Content-Type':'text/html'})
+      response.write(data)
+      response.end()
+    }
+  })
+})
+
+
+//http://remindgame.com/Gamehtml
+app.get('/MakeRoom.html', function(request, response) {
+  fs.readFile('./static/MakeRoom.html', function(err, data) {
+    if(err) {
+      response.send('에러')
+    } else {
+      response.writeHead(200, {'Content-Type':'text/html'})
+      response.write(data)
+      response.end()
+    }
+  })
+})
+
+
+
+
+app.get('/lobby/:id', function(request, response) {
+  fs.readFile('./static/MainPage_character1.html', function(err, data) {
+    if(err) {
+      response.send('에러')
+    } else {
+      response.writeHead(200, {'Content-Type':'text/html'})
+      response.write(data)
+      response.end()
+    }
+  })
+})
+
+
+
 io.sockets.on('connection', function(socket) {
 
   // 쿠키
@@ -69,12 +126,26 @@ io.sockets.on('connection', function(socket) {
 
   /* 새로운 유저가 접속 */
   socket.on('newUser', function(name) {
-    
+    console.log(socket.handshake.sessionID);
     console.log(name + ' 님이 접속하였습니다.')
 
-    /* 소켓에 이름 저장해두기 */
-    socket.name = name
+    /* 소켓과 세션에 이름 저장해두기 */
+    socket.name = name;
+    socket.handshake.session.userName = name;
   })
+
+  /* 새로운 유저가 참가 */
+  socket.on('newUserjoin', function() {
+    
+    socket.join(tempPW)   // 소켓 룸 참가
+    socket.name = socket.handshake.session.userName;
+    //socket.name = tempName
+    socket.emit('getData', tempPW)
+    io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
+                                                  name: socket.name} );
+  })
+
+
 
   // 방만들기 요청
   socket.on('makeLobby', function(data) {
@@ -90,9 +161,11 @@ io.sockets.on('connection', function(socket) {
   // 방참가 요청
   socket.on('joinLobby', function(data) {
     // 로비매니저에게 로비 참가 요청
-    if(lobbyManager.joinLobby(socket, data.PW) != -1)
+    if(lobbyManager.joinLobby(socket, data.PW) != -1) {
+      tempPW = data.PW
+      tempName = socket.name
       socket.emit('nextPage', 'Game.html')
-
+    }
   })
 
   /* 전송한 메시지 받기 */
@@ -103,8 +176,8 @@ io.sockets.on('connection', function(socket) {
     
     console.log(data)
 
-    //socket.broadcast.to(data.lobbyPW).emit('update', data);
-    socket.broadcast.emit('update', data);
+    io.sockets.to(data.lobbyPW).emit('update', data);
+    //socket.broadcast.emit('update', data);
   })
 
   /* 접속 종료 */
@@ -122,6 +195,17 @@ io.sockets.on('connection', function(socket) {
   testfunc = function(data){
     io.sockets.emit('answer',data);
   }
+
+  //new paint
+  socket.on('drawline', function(data) {
+    /* 소켓에게 전송 except sender*/
+    socket.broadcast.emit('drawline',data);
+  })
+
+  socket.on('clearcanvas', function() {
+    /* 소켓에게 전송 except sender*/
+    socket.broadcast.emit('clearcanvas');
+  })
 
 })
 
@@ -154,7 +238,7 @@ function Getaword(){
     var rand = Math.floor(Math.random() * count);
     Word.findOne().skip(rand).exec(
       function (err, result){
-        console.log(result);
+        //console.log(result);
         return result;
       })
   })

@@ -1,5 +1,16 @@
 var socket = io()
-var lobbyPW = 123;
+var lobbyPW = 0;
+
+socket.on('connect', function() {
+  socket.emit('newUserjoin')
+})
+
+socket.on('getData', function(password) {
+  lobbyPW = password
+})
+
+
+
 
 /* 서버로부터 데이터 받은 경우 */
 socket.on('update', function(data) {
@@ -24,11 +35,11 @@ socket.on('update', function(data) {
       break
   }
 
-  console.log(lobbyPW + "로 " + data.message + " 메세지가 도착했다.");
+  console.log("[" + lobbyPW + "]" + data.name + ": " + data.message);
 
-  message.classList.add(className)
-  message.appendChild(node)
-  chat.appendChild(message)
+  //message.classList.add(className)
+  //message.appendChild(node)
+  //chat.appendChild(message)
 })
 
 
@@ -53,5 +64,5 @@ function send(message) {
   //console.log(io.sockets.manager.rooms)
 
   // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message, lobbyPW: lobbyPW});
+  socket.emit('message', {type: 'message', message: message, lobbyPW: lobbyPW, name: socket.name});
 }

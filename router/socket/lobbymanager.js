@@ -9,17 +9,41 @@ function LobbyManager(socketio) {
 
 }
 
+//require(앤서)
+var allanswers = {};
+
+function pickanswer(allanswers){
+	//ppick 100 answers
+	answer = 0;
+
+	[
+		{
+			word: 'myanswer',
+			simil: 'notword'
+		},
+		{
+			
+		}
+	]
+
+	return answer;
+}
+
 // 로비 생성 함수
 LobbyManager.prototype.makeLobby = function(socket, info) {
 	var self = this;
 
 	console.log('make lobby!! ' + info.PW );
 
+	//answers = getanswewrs()
+
 	// gamelobby 객체 생성
 	let gamelobby = new GameLobby({	lobbyPW: info.PW, 
-									host: socket, 
+									host: socket.handshake.sessionID, 
 									maxRound: info.maxRound, 
-									maxTime: info.maxTime});
+									maxTime: info.maxTime,
+									nowround:0
+									});
 
 	// socket 룸 연결
 	socket.join(gamelobby.lobbyPW);
@@ -67,7 +91,7 @@ LobbyManager.prototype.joinLobby = function(socket, PW) {
 	console.log('join lobby!! ' + PW);
 
 	// socket 룸 연결
-	socket.join(targetLobby.lobbyPW);
+	socket.join(PW);
 
 	targetLobby.joinUser(socket, PW);
 

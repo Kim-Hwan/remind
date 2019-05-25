@@ -4,7 +4,6 @@ var lobbyPW = 0;
 /* 접속 되었을 때 실행 */
 socket.on('connect', function() {
 
-
   /* 이름을 입력받고 */
   var name = prompt('반갑습니다!', '')
 
@@ -20,9 +19,8 @@ socket.on('connect', function() {
 
 // 서버로부터 페이지 업데이트 명령
 socket.on('nextPage', function(data) {
-  location.href = "/client/" + data
+  location.href =  data
 }) 
-
 
 // 방만들기 버튼 클릭
 function makeLobby(Password) {
