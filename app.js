@@ -104,26 +104,33 @@ io.sockets.on('connection', function(socket) {
 
   /* 새로운 유저가 참가*/
   socket.on('newUser_MakeRoom', function() {
-    lobbyManager.joinLobby(socket, sessions[socket.handshake.sessionID])    // 로비매니저에게 joinlobby 요청
-    socket.join(sessions[socket.handshake.sessionID]);   // 소켓 룸 조인
+    var sid = socket.handshake.sessionID;       // 전송받은 메세지가 보내진 세션id
+    var roomsid = sessions[sid];                   // 전송받은 메세지가 보내질 룸의 세션ID
+    var lobby = lobbyManager.gameLobbys[roomsid];   // 전송받은 메세지가 보내질 로비
+
+    lobbyManager.joinLobby(socket, roomsid)    // 로비매니저에게 joinlobby 요청
+    socket.join(roomsid);   // 소켓 룸 조인
     socket.name = socket.handshake.session.userName;    // 이름 백업
 
     //새로 로드된 MakeRoom.html 초기화
     socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
   })
 
-
-
   /* 새로운 유저가 참가 */
   socket.on('newUser_Game', function() {
-    socket.join(sessions[socket.handshake.sessionID]);  // 소켓 룸 조인
+
+    var sid = socket.handshake.sessionID;       // 전송받은 메세지가 보내진 세션id
+    var roomsid = sessions[sid];                   // 전송받은 메세지가 보내질 룸의 세션ID
+    var lobby = lobbyManager.gameLobbys[roomsid];   // 전송받은 메세지가 보내질 로비
+
+    socket.join(roomsid);  // 소켓 룸 조인
     socket.name = socket.handshake.session.userName;    // 이름 백업
 
+    if(lobby)
+      lobby.reconnectSocket(socket);
     //새로 로드된 Game.html 초기화
-    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
+    socket.emit('init_Game', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
   })
-
-
 
   // 방만들기 요청
   socket.on('makeLobby', function(data) {
@@ -143,19 +150,42 @@ io.sockets.on('connection', function(socket) {
     }
   })
 
+  // MakeRoom.html의 host가 보낸 start 요청
   socket.on('start', function(data) {
     io.sockets.to(socket.handshake.sessionID).emit('startLobby', socket.handshake.sessionID);
+    console.log("SSSSSSSSTTTTTTTAAAAAARTTLoby");
+    lobbyManager.startLobby(socket.handshake.sessionID, {maxRound: data.maxRound, maxTime: data.maxTime});
+  })
+
+  // Game.html의 host가 보낸 start 요청
+  socket.on('startGame', function(data) {
+    io.sockets.to(socket.handshake.sessionID).emit('startLobby', socket.handshake.sessionID);
+    console.log("SSSSSSSSTTTTTTTAAAAAARTTGGGGGAAAAMMMEEEE");
+    lobbyManager.startLobby2(socket.handshake.sessionID);
   })
 
   /* 전송한 메시지 받기 */
   socket.on('message', function(data) {
 
+    var sid = socket.handshake.sessionID;       // 전송받은 메세지가 보내진 세션id
+    var roomsid = sessions[sid];                   // 전송받은 메세지가 보내질 룸의 세션ID
+    var lobby = lobbyManager.gameLobbys[roomsid];   // 전송받은 메세지가 보내질 로비
+
+    // 전송받은 메세지가 드로어에 의해 보내진 경우 무시
+    if(lobby.drawer == sid)
+      return
+
+    // 전송받은 메세지가 현 라운드의 정답이라면,
+    if(lobby.isAnwser(data.message)) {
+      lobby.incScore(sid);
+      //emit
+    }
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
     
     console.log(data)
 
-    io.sockets.to(sessions[socket.handshake.sessionID]).emit('update', data);
+    io.sockets.to(roomsid).emit('update', data);
     //socket.broadcast.emit('update', data);
   })
 

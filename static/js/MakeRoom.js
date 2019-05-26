@@ -26,7 +26,7 @@ socket.on('startLobby', function(data) {
 })
 
 
-/* 메시지 전송 함수 */
+/* 시작 함수 */
 function start(maxRound, maxTime) {
   if(!ishost)
     return

@@ -4,7 +4,6 @@ function LobbyManager(socketio) {
 	var self = this;
 
 	self.gameLobbys = {};
-	self.sockets = [];
 	self.io = socketio;
 
 }
@@ -38,7 +37,9 @@ LobbyManager.prototype.makeLobby = function(socket) {
 
 	// gamelobby 객체 생성
 	let gamelobby = new GameLobby({	//lobbyPW: info.PW, 
-									host: socket.handshake.sessionID
+									host: socket.handshake.sessionID,
+									socket: socket,
+									io: self.io
 									});
 
 	console.log('make lobby!! ' + gamelobby.host );
@@ -51,26 +52,10 @@ LobbyManager.prototype.makeLobby = function(socket) {
 
 }
 
-
-// 로비 채팅 응답 관리 함수
-LobbyManager.prototype.lobbyChatResponse = function(message) {
-	var self = this;
-	if(message.broadcast) {
-		self.io.in(message.lobbyID).broadcast.emit(message);
-	}
-	else {
-		self.io.to(message.lobbyID).emit(message);
-	}
-
-
-}
-	
-
-
 // 로비 참가 함수
-LobbyManager.prototype.joinLobby = function(socket, PW) {
+LobbyManager.prototype.joinLobby = function(socket, sessionID) {
 	var self = this;
-	var targetLobby = self.gameLobbys[PW]
+	var targetLobby = self.gameLobbys[sessionID]
 
 	// 로비가 존재하지 않음
 	if(!targetLobby) {
@@ -85,13 +70,28 @@ LobbyManager.prototype.joinLobby = function(socket, PW) {
 		return -1;
 	}*/
 
-	console.log('join lobby!! ' + PW);
+	console.log('join lobby!! ' + sessionID);
 
 	// socket 룸 연결
-	socket.join(PW);
+	socket.join(sessionID);
 
-	targetLobby.joinUser(socket, PW);
+	targetLobby.joinUser(socket, sessionID);
 
+}
+
+
+// 로비 시작 함수
+LobbyManager.prototype.startLobby = function(sessionID, option) {
+	var self = this;
+	var lobby = self.gameLobbys[sessionID]
+	lobby.initGame(option.maxRound, option.maxTime)
+}
+
+// 로비 시작 함수
+LobbyManager.prototype.startLobby2 = function(sessionID) {
+	var self = this;
+	var lobby = self.gameLobbys[sessionID]
+	lobby.nextRound();
 }
 
 

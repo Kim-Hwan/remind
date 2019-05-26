@@ -1,26 +1,54 @@
 var socket = io()
+var ishost = 0;
 var players = {}
 
 socket.on('connect', function() {
   socket.emit('newUser_Game')
 })
 
-socket.on('init_Game', function() {
-  
+socket.on('init_Game', function(data) {
+  ishost = data
 })
 
 
 
-socket.on('update_Game', function(password) {
-  
+socket.on('update_Game_timer', function(data) {
+  console.log("남은 시간 정보: " + data)
 })
 
 
+
+socket.on('update_Game_score', function(data) {
+  console.log("현재 스코어 정보: " + data)
+})
+
+
+socket.on('update_Game_round', function(data) {
+  console.log("현재 라운드 정보: " + data)
+  drawturn = 0;
+})
+
+socket.on('update_Game_round_yourdrawturn', function(data) {
+  console.log("내 그림 차례입니다, 제시어: " + data)
+  drawturn = 1;
+})
+
+
+
+
+
+
+
+
+
+socket.on('ended_Game', function(data) {
+  location.href = '../MakeRoom/' + data;
+})
 
 
 /* 서버로부터 데이터 받은 경우 */
 socket.on('update', function(data) {
-  var chat = document.getElementById('chat1')
+/*  var chat = document.getElementById('chat1')
 
   var message = document.createElement('div')
   var node = document.createTextNode(`${data.name}: ${data.message}`)
@@ -40,7 +68,7 @@ socket.on('update', function(data) {
       className = 'disconnect'
       break
   }
-
+*/
   console.log(data.name + ": " + data.message);
 
   //message.classList.add(className)
@@ -48,6 +76,13 @@ socket.on('update', function(data) {
   //chat.appendChild(message)
 })
 
+
+
+function start(maxRound, maxTime) {
+  if(!ishost)
+    return
+  socket.emit('startGame');
+}
 
 /* 메시지 전송 함수 */
 function send(message) {
