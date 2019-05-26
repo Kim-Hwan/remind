@@ -24,8 +24,11 @@ GameLobby.prototype.joinUser = function(socket, PW) {
 
 	socket.join(PW);
 	for(var i in self.players) {
+		if(self.players[i] == socket.handshake.sessionID)
+			return;
 		if(!self.players[i]) {
 			self.players[i] = socket.handshake.sessionID;
+			console.log(self.players);
 			return;
 		}
 	}

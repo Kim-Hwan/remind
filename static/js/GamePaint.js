@@ -1,81 +1,6 @@
-var socket = io()
-var players = {}
+//window.onload = function () {
 
-socket.on('connect', function() {
-  socket.emit('newUser_Game')
-})
-
-socket.on('init_Game', function() {
-  
-})
-
-
-
-socket.on('update_Game', function(password) {
-  
-})
-
-
-
-
-/* 서버로부터 데이터 받은 경우 */
-socket.on('update', function(data) {
-  var chat = document.getElementById('chat1')
-
-  var message = document.createElement('div')
-  var node = document.createTextNode(`${data.name}: ${data.message}`)
-  var className = ''
-
-  // 타입에 따라 적용할 클래스를 다르게 지정
-  switch(data.type) {
-    case 'message':
-      className = 'other'
-      break
-
-    case 'connect':
-      className = 'connect'
-      break
-
-    case 'disconnect':
-      className = 'disconnect'
-      break
-  }
-
-  console.log(data.name + ": " + data.message);
-
-  //message.classList.add(className)
-  //message.appendChild(node)
-  //chat.appendChild(message)
-})
-
-
-/* 메시지 전송 함수 */
-function send(message) {
-
-  /*
-  // 입력되어있는 데이터 가져오기
-  var message = document.getElementById('test').value
-  
-  // 가져왔으니 데이터 빈칸으로 변경
-  document.getElementById('test').value = ''
-
-  // 내가 전송할 메시지 클라이언트에게 표시
-  var chat = document.getElementById('chat')
-  var msg = document.createElement('div')
-  var node = document.createTextNode(message)
-  msg.classList.add('me')
-  msg.appendChild(node)
-  chat.appendChild(msg)
-  */
-  //console.log(io.sockets.manager.rooms)
-
-  // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message, name: socket.name});
-}
-
-// more paint
-
-//  // Definitions
+  // Definitions
   var canvas = document.getElementById("paint-canvas");
   var context = canvas.getContext("2d");
   var boundings = canvas.getBoundingClientRect();
@@ -101,7 +26,7 @@ function send(message) {
     drawturn = 0;
   }
 
-/*
+
   // Handle Colors
   var colors = document.getElementsByClassName('colors')[0];
 
@@ -119,7 +44,7 @@ function send(message) {
     linewidth = context.lineWidth;
     isDrawing = 0;
   });
-*/
+
   // Mouse Down Event
   canvas.addEventListener('mousedown', function(event) {
     if (drawturn == 0) return;
@@ -220,7 +145,6 @@ function send(message) {
     return [mouseX,mouseY];
   }
 
-/*
   // Handle Clear Button
   var clearButton = document.getElementById('clear');
 
@@ -229,34 +153,33 @@ function send(message) {
     socket.emit('clearcanvas');
     clearcanvas();
   });
-*/
+
   function clearcanvas(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     isDrawing = 0;
   }
 
-/*
   // Handle Save Button
   var saveButton = document.getElementById('save');
 
 
   saveButton.addEventListener('click', function() {
-  
+  /*
     var imageName = prompt('Please enter image name');
     var canvasDataURL = canvas.toDataURL();
     var a = document.createElement('a');
     a.href = canvasDataURL;
     a.download = imageName || 'drawing';
     a.click();
-  //
+  */
     drawingturn();
     
-  });*/
+  });
 
   context.font = "30px Arial";
   
 
-  //var socket = io();
+  var socket = io();
   var answered = 0;
 
 
@@ -278,4 +201,6 @@ function send(message) {
     clearcanvas();
   })
   
-//}
+  
+
+//};

@@ -18,7 +18,6 @@ const session = require("express-session")({
     saveUninitialized: true
 });
 var sharedsession = require("express-socket.io-session"); // socket io session 모듈
-//const router = 
 
 /* express 객체 생성 */
 const app = express()
@@ -35,17 +34,6 @@ var lobbyManager = new LobbyManager(io);
 
 // 데이터베이스 대체 배열
 var sessions = {};
-
-/*
-// 세션 사용
-app.use(session({
- // genid: function(req) {
- //   return genuuid() // 기본값으로 쓰이는 UID 대신 UUID를 세션ID로 사용
- // },
-  secret: 'secretcodeofhwan',
-  resave: true,
-  saveUninitialized: true
-}));*/
 
 app.use(session);
 
@@ -90,7 +78,10 @@ app.get('/Game/:id', function(request, response) {
   fs.readFile('./static/Game.html', function(err, data) {
     if(err) {
       response.send('에러')
-    } else {
+    } else if(sessions[request.sessionID] != request.params.id) {
+      response.send('정상적이지 않은 접근')
+    } 
+    else {
       response.writeHead(200, {'Content-Type':'text/html'})
       response.write(data)
       response.end()
@@ -102,14 +93,8 @@ app.get('/Game/:id', function(request, response) {
 
 io.sockets.on('connection', function(socket) {
 
-  // 쿠키
-  //var cookies = cookie.parse(socket.handshake.headers.cookie);
-  //console.log(socket.handshake.headers.cookie);
-
-
   /* 새로운 유저가 접속 */
   socket.on('newUser', function(name) {
-    //console.log(socket.handshake.sessionID);
     console.log(name + ' 님이 접속하였습니다.')
 
     /* 소켓과 세션에 이름 저장해두기 */
@@ -118,27 +103,24 @@ io.sockets.on('connection', function(socket) {
   })
 
   /* 새로운 유저가 참가*/
-  socket.on('newUserjoin', function() {
-    socket.join(sessions[socket.handshake.sessionID]);
-    socket.name = socket.handshake.session.userName;
-    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]))
-    //socket.name = tempName
-    //socket.emit('getData', tempPW)
-    //io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
-    //                                              name: socket.name} );
+  socket.on('newUser_MakeRoom', function() {
+    lobbyManager.joinLobby(socket, sessions[socket.handshake.sessionID])    // 로비매니저에게 joinlobby 요청
+    socket.join(sessions[socket.handshake.sessionID]);   // 소켓 룸 조인
+    socket.name = socket.handshake.session.userName;    // 이름 백업
+
+    //새로 로드된 MakeRoom.html 초기화
+    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
   })
 
 
 
   /* 새로운 유저가 참가 */
-  socket.on('newUserjoin2', function() {
-    
-    socket.join(socket.handshake.sessionID)   // 소켓 룸 참가
-    socket.name = socket.handshake.session.userName;
-    //socket.name = tempName
-    //socket.emit('getData', tempPW)
-    //io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
-    //                                              name: socket.name} );
+  socket.on('newUser_Game', function() {
+    socket.join(sessions[socket.handshake.sessionID]);  // 소켓 룸 조인
+    socket.name = socket.handshake.session.userName;    // 이름 백업
+
+    //새로 로드된 Game.html 초기화
+    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
   })
 
 
@@ -156,7 +138,7 @@ io.sockets.on('connection', function(socket) {
   // 방참가 요청
   socket.on('joinLobby', function(data) {
     // 로비매니저에게 로비 참가 요청
-    if(lobbyManager.joinLobby(socket, data.PW) != -1) {
+    if(lobbyManager.gameLobbys[data.PW]) {
       socket.emit('nextPage', 'MakeRoom/' + data.PW)
     }
   })
@@ -173,7 +155,7 @@ io.sockets.on('connection', function(socket) {
     
     console.log(data)
 
-    io.sockets.to(data.lobbyPW).emit('update', data);
+    io.sockets.to(sessions[socket.handshake.sessionID]).emit('update', data);
     //socket.broadcast.emit('update', data);
   })
 
@@ -188,7 +170,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('draw', function(data) {
 
     /* 모든 소켓에게 전송 */
-    io.sockets.to(data.lobbyPW).emit('draw', data)
+    io.sockets.to(sessions[socket.handshake.sessionID]).emit('draw', data)
   })
 
 
@@ -199,12 +181,12 @@ io.sockets.on('connection', function(socket) {
   //new paint
   socket.on('drawline', function(data) {
     /* 소켓에게 전송 except sender*/
-    socket.broadcast.emit('drawline',data);
+    socket.broadcast.to(sessions[socket.handshake.sessionID]).emit('drawline',data);
   })
 
   socket.on('clearcanvas', function() {
     /* 소켓에게 전송 except sender*/
-    socket.broadcast.emit('clearcanvas');
+    socket.broadcast.to(sessions[socket.handshake.sessionID]).emit('clearcanvas');
   })
 
 })

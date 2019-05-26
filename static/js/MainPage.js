@@ -30,12 +30,6 @@ function joinLobby(Password) {
 }
 
 
-// 로그인 버튼 클릭
-function login() {
-
-}
-
-
 // 캐릭터 변경 화살표 버튼 클릭
 function changeCharacter() {
 

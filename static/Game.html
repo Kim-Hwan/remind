@@ -7,9 +7,11 @@
 <title>Game Window</title>
 <link href="/css/Game.css" rel="stylesheet" type="text/css">
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/Game.js"></script>
+<!--<script src="/js/GamePaint.js"></script>-->
 </head>
 <body>
+
+<canvas id="paint-canvas" width="640" height="400"></canvas>
 <div class="container">
   <header>
     <div class="primary_header"> 
@@ -37,8 +39,8 @@
 		  
 		
 		<h2 class="cloud2" style="float:left">
-			<!--<img class="draw" src="/Logo/그림판.png" alt=""/>-->
-        	<canvas id="paint-canvas" width="640" height="400"></canvas>
+			<img class="draw" src="/Logo/그림판.png" alt=""/>
+			
 			
 			</h2>
 		  
@@ -67,8 +69,10 @@
   <div class="main" style="clear:both"> </div>
   <footer class="secondary_header footer">
     <img class="answer" src="/Logo/answer.png" alt=""/>
+
 <div class="copyright">&copy;2019 - REMIND</div>
   </footer>
 </div>
 </body>
+<script src="/js/Game.js"></script>
 </html>

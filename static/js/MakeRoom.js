@@ -1,8 +1,9 @@
 var socket = io()
 var ishost = 0;
+var players = {}
 
 socket.on('connect', function() {
-  socket.emit('newUserjoin')
+  socket.emit('newUser_MakeRoom')
 })
 
 socket.on('init_MakeRoom', function(data) {
