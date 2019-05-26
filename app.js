@@ -35,8 +35,6 @@ var lobbyManager = new LobbyManager(io);
 
 // 데이터베이스 대체 배열
 var sessions = {};
-var tempPW = 0;
-var tempName = null;
 
 /*
 // 세션 사용
@@ -65,6 +63,7 @@ app.get('/', function(request, response) {
     if(err) {
       response.send('에러')
     } else {
+      sessions[request.sessionID] = request.sessionID   // 세션 배열에 추가
       response.writeHead(200, {'Content-Type':'text/html'})
       response.write(data)
       response.end()
@@ -73,26 +72,12 @@ app.get('/', function(request, response) {
 })
 
 
-//http://remindgame.com/Gamehtml
-app.get('/Game.html', function(request, response) {
-  fs.readFile('./static/Game.html', function(err, data) {
-    if(err) {
-      response.send('에러')
-    } else {
-      response.writeHead(200, {'Content-Type':'text/html'})
-      response.write(data)
-      response.end()
-    }
-  })
-})
-
-
-//http://remindgame.com/Gamehtml
-app.get('/MakeRoom.html', function(request, response) {
+app.get('/MakeRoom/:id', function(request, response) {
   fs.readFile('./static/MakeRoom.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
+      sessions[request.sessionID] = request.params.id   // 세션 배열에 추가
       response.writeHead(200, {'Content-Type':'text/html'})
       response.write(data)
       response.end()
@@ -101,10 +86,8 @@ app.get('/MakeRoom.html', function(request, response) {
 })
 
 
-
-
-app.get('/lobby/:id', function(request, response) {
-  fs.readFile('./static/MainPage_character1.html', function(err, data) {
+app.get('/Game/:id', function(request, response) {
+  fs.readFile('./static/Game.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
@@ -126,7 +109,7 @@ io.sockets.on('connection', function(socket) {
 
   /* 새로운 유저가 접속 */
   socket.on('newUser', function(name) {
-    console.log(socket.handshake.sessionID);
+    //console.log(socket.handshake.sessionID);
     console.log(name + ' 님이 접속하였습니다.')
 
     /* 소켓과 세션에 이름 저장해두기 */
@@ -134,15 +117,28 @@ io.sockets.on('connection', function(socket) {
     socket.handshake.session.userName = name;
   })
 
-  /* 새로운 유저가 참가 */
+  /* 새로운 유저가 참가*/
   socket.on('newUserjoin', function() {
+    socket.join(sessions[socket.handshake.sessionID]);
+    socket.name = socket.handshake.session.userName;
+    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]))
+    //socket.name = tempName
+    //socket.emit('getData', tempPW)
+    //io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
+    //                                              name: socket.name} );
+  })
+
+
+
+  /* 새로운 유저가 참가 */
+  socket.on('newUserjoin2', function() {
     
-    socket.join(tempPW)   // 소켓 룸 참가
+    socket.join(socket.handshake.sessionID)   // 소켓 룸 참가
     socket.name = socket.handshake.session.userName;
     //socket.name = tempName
-    socket.emit('getData', tempPW)
-    io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
-                                                  name: socket.name} );
+    //socket.emit('getData', tempPW)
+    //io.sockets.to(tempPW).emit('update', {  message: "님이 참가하셨습니다.",
+    //                                              name: socket.name} );
   })
 
 
@@ -150,22 +146,23 @@ io.sockets.on('connection', function(socket) {
   // 방만들기 요청
   socket.on('makeLobby', function(data) {
     // 로비매니저에게 로비 생성 요청
-    lobbyManager.makeLobby(socket, {  PW: data.PW, 
-                                      maxRound: data.maxRound, 
-                                      maxtime: data.maxtime} )
+    lobbyManager.makeLobby(socket)
 
     // 클라이언트에게 페이지 업데이트 요청
-    socket.emit('nextPage', 'MakeRoom.html')
+    socket.emit('nextPage', 'MakeRoom/' + socket.handshake.sessionID)
+    //socket.emit('nextPage', 'MakeRoom.html')
   })
 
   // 방참가 요청
   socket.on('joinLobby', function(data) {
     // 로비매니저에게 로비 참가 요청
     if(lobbyManager.joinLobby(socket, data.PW) != -1) {
-      tempPW = data.PW
-      tempName = socket.name
-      socket.emit('nextPage', 'Game.html')
+      socket.emit('nextPage', 'MakeRoom/' + data.PW)
     }
+  })
+
+  socket.on('start', function(data) {
+    io.sockets.to(socket.handshake.sessionID).emit('startLobby', socket.handshake.sessionID);
   })
 
   /* 전송한 메시지 받기 */
@@ -182,6 +179,9 @@ io.sockets.on('connection', function(socket) {
 
   /* 접속 종료 */
   socket.on('disconnect', function() {
+    //if(socket.handshake.session.userName)
+    //  delete socket.handshake.session.userName;
+    //delete sessions[socket.handshake.sessionID]
     //console.log(socket.name + '님이 나가셨습니다.')
   })
 

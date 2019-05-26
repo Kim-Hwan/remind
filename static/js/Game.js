@@ -2,11 +2,17 @@ var socket = io()
 var lobbyPW = 0;
 
 socket.on('connect', function() {
-  socket.emit('newUserjoin')
+  socket.emit('newUserjoin2')
 })
 
-socket.on('getData', function(password) {
-  lobbyPW = password
+socket.on('init_Game', function(password) {
+  
+})
+
+
+
+socket.on('update_Game', function(password) {
+  
 })
 
 
@@ -66,3 +72,11 @@ function send(message) {
   // 서버로 message 이벤트 전달 + 데이터와 함께
   socket.emit('message', {type: 'message', message: message, lobbyPW: lobbyPW, name: socket.name});
 }
+
+// more paint
+
+  var canvas = document.getElementById("paint-canvas");
+  var context = canvas.getContext("2d");
+  var boundings = canvas.getBoundingClientRect();
+  var drawturn = 0;
+  

@@ -30,26 +30,23 @@ function pickanswer(allanswers){
 }
 
 // 로비 생성 함수
-LobbyManager.prototype.makeLobby = function(socket, info) {
+LobbyManager.prototype.makeLobby = function(socket) {
 	var self = this;
 
-	console.log('make lobby!! ' + info.PW );
 
 	//answers = getanswewrs()
 
 	// gamelobby 객체 생성
-	let gamelobby = new GameLobby({	lobbyPW: info.PW, 
-									host: socket.handshake.sessionID, 
-									maxRound: info.maxRound, 
-									maxTime: info.maxTime,
-									nowround:0
+	let gamelobby = new GameLobby({	//lobbyPW: info.PW, 
+									host: socket.handshake.sessionID
 									});
 
+	console.log('make lobby!! ' + gamelobby.host );
 	// socket 룸 연결
-	socket.join(gamelobby.lobbyPW);
+	socket.join(gamelobby.host);
 	//gamelobby.on('response', self.lobbyChatResponse.bind(self));
 
-	self.gameLobbys[info.PW] = gamelobby;	
+	self.gameLobbys[gamelobby.host] = gamelobby;	
 
 
 }
