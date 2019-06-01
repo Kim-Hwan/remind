@@ -1,78 +1,99 @@
-ï»¿<!doctype html>
+<DOCTYPE!>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Game Window</title>
-<link href="/css/Game.css" rel="stylesheet" type="text/css">
-<script src="/socket.io/socket.io.js"></script>
-<!--<script src="/js/GamePaint.js"></script>-->
+	<style>
+		.container{
+			position: relative;
+		}
+		#soundButton{
+			position: absolute;
+			left: 0%;
+			top: 0%;
+		}
+		#logo{
+			position: absolute;
+			left: 5%;
+			top: 0%;
+			margin-top: 8px;
+		}
+		#timer{
+			position: absolute;
+			top: 0%;
+			left: 43%;
+			margin-top: 8px;
+		}
+		#mobileConnect{
+			position: absolute;
+			top: 2%;
+			right: 2%;
+		}
+		#liveConnect{
+			position: absolute;
+			top: 2%;
+			right: 18%;
+		}
+		#board{
+			position: absolute;
+			top: 15%;
+			left: 30%;
+			width: 40%;
+			height: 70%;
+		}
+		#score1{
+			position: absolute;
+			top: 15%;
+			left: 1%;
+		}
+		#score2{
+			position: absolute;
+			top: 42%;
+			left: 1%;
+		}
+		#score3{
+			position: absolute;
+			top: 69%;
+			left: 1%;
+		}
+		#score4{
+			position: absolute;
+			top: 15%;
+			right: 1%;
+		}
+		#score5{
+			position: absolute;
+			top: 42%;
+			right: 1%;
+		}
+		#score6{
+			position: absolute;
+			top: 69%;
+			right: 1%;
+		}
+		#answer{
+			position: absolute;
+			top: 87%;
+			left: 30%;
+		}
+	</style>
 </head>
 <body>
-
-<canvas id="paint-canvas" width="640" height="400"></canvas>
-<div class="container">
-  <header>
-    <div class="primary_header"> 
-	  	<img class="img_sound_off" src="/Logo/sound_off.png" alt=""/> 
-		<a href="MainPage_AfterLogin.html"><img class="img_logo" src="/Logo/RE-MIND_logo.png" alt=""/></a>		
-
-		
-	  	<img class="img_timer" src="/Logo/timer.png" alt=""/>
-		
-	  	<img class="cnt_mobile" src="/Logo/cnt_mobile.png" alt=""/>
-	  	<img class="btn_live" src="/Logo/btn_live.png" alt=""/>
-		
-		
-<nav class="secondary_header" id="menu"> </nav>
-    </div>
-  </header>
-  <section>
-	  <h2 class="main" style="clear: both">
-		<h2 class="cloud1" style="float:left" >
-			<img id="chat1"	class="cnt_score_1" src="/Logo/cnt_score.png"  alt=""/> 
-		  	<img class="cnt_score_2" src="/Logo/cnt_score.png"  alt=""/> 
-		  	<img class="cnt_score_3" src="/Logo/cnt_score.png"  alt=""/> 
-		  
-		  </h2>
-		  
-		
-		<h2 class="cloud2" style="float:left">
-			<img class="draw" src="/Logo/ê·¸ë¦¼íŒ.png" alt=""/>
-			
-			
-			</h2>
-		  
-		<h2 class="cloud3" style="float:left" >
-			<img class="cnt_score_4" src="/Logo/cnt_score.png"  alt=""/> 
-		  	<img class="cnt_score_5" src="/Logo/cnt_score.png"  alt=""/> 
-		  	<img class="cnt_score_6" src="/Logo/cnt_score.png"  alt=""/> 
-		  
-		  </h2>
-		  
-		 
-		
-	  </h2>
-	  	
-	  <h3 class="figure" style="clear:both">
-		  <h3 class="figure1" style="float:left">
-
-
-		  </h3>
-		  
-		  <h3 class="figure2" style="float:right">
-	  	
-		  </h3>
-	  </h3>
-	</section>
-  <div class="main" style="clear:both"> </div>
-  <footer class="secondary_header footer">
-    <img class="answer" src="/Logo/answer.png" alt=""/>
-
-<div class="copyright">&copy;2019 - REMIND</div>
-  </footer>
-</div>
+	<div class="container">
+		<img id="backround" src="/Logo/Background_GameRoom.png" style="width:100%; height:100%;">
+		<img id="soundButton" src="/Logo/sound_off.png" style="width:5%;">
+		<a href="MainPage_AfterLogin.html"><img id="logo" src="/Logo/Logo_Small.png" style="width: 20%;"></a>
+		<img id="timer" src="/Logo/timer.png" style="width: 15%">
+		<img id="mobileConnect" src="/Logo/cnt_mobile.png" style="width: 15%">
+		<img id="liveConnect" src="/Logo/btn_live.png" style="width: 16%">
+		<img id="board" src="/Logo/±×¸²ÆÇ.png">
+		<img id="score1" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="score2" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="score3" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="score4" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="score5" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="score6" src="/Logo/cnt_score.png" style="width: 28%;">
+		<img id="answer" src="/Logo/answer.png" style="width: 40%; height: 10%">
+	</div>
 </body>
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/Game.js"></script>
-</html>
+<html>

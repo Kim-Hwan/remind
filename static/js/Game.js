@@ -136,7 +136,7 @@ function send(message) {
     drawturn = 0;
   }
 
-/*
+
   // Handle Colors
   var colors = document.getElementsByClassName('colors')[0];
 
@@ -154,7 +154,7 @@ function send(message) {
     linewidth = context.lineWidth;
     isDrawing = 0;
   });
-*/
+
   // Mouse Down Event
   canvas.addEventListener('mousedown', function(event) {
     if (drawturn == 0) return;
@@ -255,7 +255,7 @@ function send(message) {
     return [mouseX,mouseY];
   }
 
-/*
+
   // Handle Clear Button
   var clearButton = document.getElementById('clear');
 
@@ -264,29 +264,29 @@ function send(message) {
     socket.emit('clearcanvas');
     clearcanvas();
   });
-*/
+
   function clearcanvas(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     isDrawing = 0;
   }
 
-/*
+
   // Handle Save Button
   var saveButton = document.getElementById('save');
 
 
   saveButton.addEventListener('click', function() {
-  
+  /*
     var imageName = prompt('Please enter image name');
     var canvasDataURL = canvas.toDataURL();
     var a = document.createElement('a');
     a.href = canvasDataURL;
     a.download = imageName || 'drawing';
     a.click();
-  //
+  */
     drawingturn();
     
-  });*/
+  });
 
   context.font = "30px Arial";
   

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RE:MIND GAME</title>
+    <link rel="stylesheet" href="/css/game.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="head">
+            <div class="headitems">
+                <img class="imagestyle1" src="/Logo/sound_off.png">
+            </div>
+            <div class="headitems">
+                <img class="imagestyle1" src="/Logo/Logo_Small.png">
+            </div>
+            <div class="headitems">
+                <img class="imagestyle1" src="/Logo/timer.png">
+            </div>
+            <div class="headitems">
+                <img class="imagestyle1" src="/Logo/cnt_mobile.png">
+            </div>
+            <div class="headitems">
+                <img class="imagestyle1" src="/Logo/btn_live.png">
+            </div>
+        </div>
+        <div class="content">
+            <div class="side">
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player1">b</div>
+                </div>
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player2">b</div>
+                </div>
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player3">b</div>
+                </div>
+            </div>
+            <div class="middle">
+                <div class="wordarea" id="answerword">h</div>
+                <div class="wordarea" id="mineword">j</div>
+                <div class="canvasarea">
+                    <div class="canvasblock">
+                        <canvas id="paint-canvas" width="640" height="400"></canvas>
+                    </div>
+                    <div class="painttool">
+                        <div class="colors">
+                          <button type="button" value="#0000ff"></button>
+                          <button type="button" value="#009fff"></button>
+                          <button type="button" value="#0fffff"></button>
+                          <button type="button" value="#bfffff"></button>
+                          <button type="button" value="#000000"></button>
+                          <button type="button" value="#333333"></button>
+                          <button type="button" value="#666666"></button>
+                          <button type="button" value="#999999"></button>
+                          <button type="button" value="#ffcc66"></button>
+                          <button type="button" value="#ffcc00"></button>
+                          <button type="button" value="#ffff00"></button>
+                          <button type="button" value="#ffff99"></button>
+                          <button type="button" value="#003300"></button>
+                          <button type="button" value="#555000"></button>
+                          <button type="button" value="#00ff00"></button>
+                          <button type="button" value="#99ff99"></button>
+                          <button type="button" value="#f00000"></button>
+                          <button type="button" value="#ff6600"></button>
+                          <button type="button" value="#ff9933"></button>
+                          <button type="button" value="#f5deb3"></button>
+                          <button type="button" value="#330000"></button>
+                          <button type="button" value="#663300"></button>
+                          <button type="button" value="#cc6600"></button>
+                          <button type="button" value="#deb887"></button>
+                          <button type="button" value="#aa0fff"></button>
+                          <button type="button" value="#cc66cc"></button>
+                          <button type="button" value="#ff66ff"></button>
+                          <button type="button" value="#ff99ff"></button>
+                          <button type="button" value="#e8c4e8"></button>
+                          <button type="button" value="#ffffff"></button>
+                        </div>
+                        <div class="brushes">
+                          <button type="button" value="1"></button>
+                          <button type="button" value="2"></button>
+                          <button type="button" value="3"></button>
+                          <button type="button" value="4"></button>
+                          <button type="button" value="5"></button>
+                        </div>
+                        <div class="buttons">
+                          <button id="clear" type="button">Clear</button>
+                          <button id="save" type="button">Force my turn</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="typingarea">
+                    <input type="text">
+                </div>
+            </div>
+            <div class="side">
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player4">b</div>
+                </div>
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player5">b</div>
+                </div>
+                <div class="players">
+                    <div class="score">a</div>
+                    <div class="chara" id="player6">b</div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--<script src="/js/midtest.js"></script>-->
+<!--<script src="/js/test.js"></script>-->
+</body>
+<script src="/js/Game.js"></script>
+</html>

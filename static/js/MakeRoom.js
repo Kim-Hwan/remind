@@ -30,7 +30,7 @@ socket.on('startLobby', function(data) {
 function start(maxRound, maxTime) {
   if(!ishost)
     return
-  socket.emit('start', {maxRound: maxRound, maxTime: maxTime});
+  socket.emit('start', {maxRound: Number(maxRound), maxTime: Number(maxTime)});
 }
 
 // 라운드 증가 버튼 클릭

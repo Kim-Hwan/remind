@@ -225,5 +225,6 @@ main {
 }
 
 #paint-canvas {
+  touch-action: none;
   cursor:crosshair;
 }

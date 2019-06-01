@@ -1,6 +1,6 @@
 var socket2 = io()
 
-var canvas = document.getElementById('paint-canvas');
+var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 var admin = 0;
  

@@ -65,7 +65,8 @@ GameLobby.prototype.nextRound = function() {
 
 	console.log(self.host + "'s Game: " + self.roundNum + "round start");
 	self.io.sockets.to(self.host).emit('update_Game_round', self.roundNum);
-	self.io.to((self.sockets[0]).id).emit('update_Game_round_yourdrawturn', self.anwsers[0]);
+	self.io.to((self.sockets[self.drawerNum]).id).emit('update_Game_round_yourdrawturn', self.anwsers[0]);
+	self.io.sockets.to(self.host).emit('clearcanvas', self.roundNum);
 
 	function gameLoop() {
 	
@@ -83,9 +84,20 @@ GameLobby.prototype.nextRound = function() {
 	self.gameInterval = setInterval(gameLoop.bind(self), 1000);
 }
 
+// 다음 drawer의 번호를 계산하여 반환
 GameLobby.prototype.nextDrawer = function() {
 	var self = this;
-	return 0;
+	var nextDrawerNum = self.drawerNum + 1;
+
+	// 단순하게 (최근번호+1)%(플레이어 수)를 반환하면 안되는 이유
+	// 플레이어 수는 중간에 나가는 플레이어로 인해 유동적이기 때문
+	while(self.players[nextDrawerNum] == null) {
+		nextDrawerNum = (nextDrawerNum + 1) % 6
+		if(nextDrawerNum == self.drawerNum)	// 검색 도중 이전 drawer를 반환하는 경우(정상적이지 않은 게임 흐름)
+			return -1
+	}	
+
+	return nextDrawerNum;
 }
 
 //정답 확인 함수, app.js에서 전송받은 message가 답인지 확인할 때 호출

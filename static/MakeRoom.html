@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -6,39 +6,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Create Room</title>
 <link href="/css/MakeRoom.css" rel="stylesheet" type="text/css">
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/MakeRoom.js"></script>
+
+<script type="text/javascript">
+	var images = new Array("Character_3.png", "Character_2.png", "Character_1.png");
+	var url_string = window.location.href;
+	var size=3;
+	url = new URL(url_string);
+	var player = url.searchParams.get("player");
+//	console.log(player);
+	
+	function refreshCharacter(){
+		document.getElementById('character2').src = "/Logo/"+images[player%size];
+	}
+
+	function roundUp(){
+ 		if(!ishost)
+    		return
+		var text = document.getElementById("proundNumber").textContent;
+		if(text=="9")
+			return;
+		var number = Number(text) + 1;
+		document.getElementById("proundNumber").innerHTML = String(number);
+	}
+	function roundDown(){
+ 		if(!ishost)
+    		return
+		var text = document.getElementById("proundNumber").textContent;
+		if(text=="1")
+			return;
+		var number = Number(text) - 1;
+		document.getElementById("proundNumber").innerHTML = String(number);
+	}
+	function ttdUp(){
+ 		if(!ishost)
+    		return
+		var text = document.getElementById("ptimeToDraw").textContent;
+		if(text=="90")
+			return;
+		var number = Number(text) + 10;
+		document.getElementById("ptimeToDraw").innerHTML = String(number);
+	}
+	function ttdDown(){
+ 		if(!ishost)
+    		return
+		var text = document.getElementById("ptimeToDraw").textContent;
+		if(text=="0")
+			return;
+		var number = Number(text) - 10;
+		document.getElementById("ptimeToDraw").innerHTML = String(number);
+	}
+</script>
+
 </head>
-<body>
-<div class="container">
-  <header>
-    <div class="primary_header"> 
-	  <a href="MainPage_AfterLogin.html"><img class="img_logo" src="/Logo/RE-MIND_logo.png" alt=""/></a>
-		
-		
-<nav class="secondary_header" id="menu"> </nav>
-    </div>
-  </header>
-  <section>
+<body onload="refreshCharacter();">
+
+	<div class="container">
+	<header>
+		<div class="primary_header"> 
+		<a href="MainPage_AfterLogin.html"><img class="img_logo" src="/Logo/RE-MIND_logo.png" alt=""/></a>
+		<nav class="secondary_header" id="menu"> </nav>
+		</div>
+	</header>
+	<section>
+
 	  <h2 class="main">
 		<h2 class="cloud1" style="float:left" >
 			<img class="img_bg_room" src="/Logo/Background_Room.png" alt=""/> 
 			<img class="choose_round" src="/Logo/Round.png" alt=""/> 
 			
 			<img class="blank" src="/Logo/Blank.png" alt=""/>
-		  	<img class="up" src="/Logo/up.png" alt=""/> 
-		  	<img class="down" src="/Logo/down.png" alt=""/> 
+
+			<img id="up" class="up" onclick="roundUp();" src="/Logo/up.png" alt=""/> 
+		  	<img id="down" class="down" onclick="roundDown()" src="/Logo/down.png" alt=""/> 
+            	
+
+			<div class="timeToDraw">
+				<p id="ptimeToDraw"><font size="5"; font-family="배달의민족 한나";>0</font></p>
+			</div>
+
+		  	<img class="choose_time" src="/Logo/time.png" alt=""/> 
+
+
+			<img class="blank2" src="/Logo/Blank.png" alt=""/>
 			
-	      	<img class="choose_time" src="/Logo/time.png" alt=""/> 
-		  	<img class="blank2" src="/Logo/Blank.png" alt=""/>
-			<img class="up1" src="/Logo/up.png" alt=""/> 
-		  	<img class="down2" src="/Logo/down.png" alt=""/> 
-			<a href="Game.html">
-		  	<img class="start_game" src="/Logo/start_game.png"  alt=""/> </h2>
+			<div class="roundNumber">
+				<p id="proundNumber"><font size=5rem; font-family="배달의민족 한나";>1</font></p>
+			</div>
+
+
+			<img id="up2" class="up1" onclick="ttdUp()" src="/Logo/up.png" alt=""/> 
+		  	<img id="down2" class="down2" onclick="ttdDown()" src="/Logo/down.png" alt=""/> 
+			<!--<a href="Game.html">-->
+			<a>
+		  	<!--<img class="start_game" src="/Logo/start_game.png"  alt=""/> </h2>-->
+		  	<img class="start_game" onclick="start( document.getElementById('proundNumber').innerHTML, document.getElementById('ptimeToDraw').innerHTML )" src="/Logo/start_game.png"  alt=""/> </h2>
 		  	</a>
 
 		<h2 class="cloud2" style="float:left">
 			<img class="show_players" src="/Logo/show_players.png"  alt=""/> 
+			<img id="character2" class="character2" src="/Logo/Character_2.png" alt="character"/>
 			</h2>
 		
 	  </h2>
@@ -47,8 +116,7 @@
 		  <h3 class="figure1" style="float:left">
 	  	  	<img class="img_fig1" src="/Logo/Fig1.png"  alt=""/> 
 	  	  	<img class="img_fig2" src="/Logo/Fig2.png"  alt=""/>
-<!--			<input type="text">	-->
-	      	  <img class="copy_link" src="/Logo/copy_link.png" alt=""/>  </h3>
+	      	  	<img class="copy_link" src="/Logo/copy_link.png" alt=""/>  </h3>
 		  
 		  <h3 class="character" style="float:left" >
 
@@ -64,6 +132,7 @@
   <footer class="secondary_header footer">
     <img class="image_grass" src="/Logo/Grass.png" alt=""/>
 	  
+
 <div class="copyright">&copy;2019 - REMIND</div>
   </footer>
 </div>

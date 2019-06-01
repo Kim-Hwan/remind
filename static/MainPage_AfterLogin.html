@@ -1,35 +1,56 @@
 ﻿<!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mainpage after login</title>
-<link href="/css/MainPage_AfterLogin.css" rel="stylesheet" type="text/css">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Mainpage after login</title>
+	<link href="MainPage_AfterLogin.css" rel="stylesheet" type="text/css">
+
+	<script type="text/javascript">
+		var images = new Array("Character_3.png", "Character_2.png", "Character_1.png");
+		var i=5;
+		var size=3;
+		function makeRoomFunction(){
+			var temp = document.getElementById("makeRoom");
+			temp.href+="?player="+String(i);
+		}
+		function rightChangeImg(){
+			var img1=document.getElementById('character');
+			img1.src="Logo/"+images[(++i) % size];
+		}
+		function leftChangeImg(){
+			if(i==0)
+				i+=size;
+			var img1=document.getElementById('character');
+			img1.src="Logo/"+images[(--i) % size];
+		}
+	</script>
+
 </head>
+
 <body>
-<div class="container">
-  <header>
-    <div class="primary_header"> 
-	  <img class="img_logo" src="Logo/RE-MIND_logo.png" alt=""/>
+	<div class="container">
+	<header>
+		<div class="primary_header"> 
+		<img class="img_logo" src="Logo/RE-MIND_logo.png" alt=""/>
 		
-		
-<nav class="secondary_header" id="menu"> </nav>
-    </div>
-  </header>
-  <section>
-	  <h2 class="cloud">
+		<nav class="secondary_header" id="menu"> </nav>
+		</div>
+	</header>
+	<section>
+		<h2 class="cloud">
 		<h2 class="cloud1" style="float:left" >
 			<img class="img_cloud" src="Logo/클라우드.png"  alt=""/> 
-			<img class="img_cloud1" src="Logo/cloud1_1.png" alt=""/>
+			<a href="MainPage.html"><img class="img_cloud1" src="Logo/로그아웃.png" alt=""/></a>
 		</h2>
 	<h2 class="cloud2" style="float:left">
 	    	<a href="Game.html">
 		<img class="img_start" src="Logo/시작.png"  alt=""/> 
 		</a>
 		<img class="img_cloud2" src="Logo/cloud2.png"  alt=""/> 
-		<a href="MakeRoom.html">
-			<img class="img_room" src="Logo/Room.png"  alt=""/>
+		<a id="makeRoom" href="MakeRoom.html">
+			<img class="img_room" onclick="makeRoomFunction()" src="Logo/Room.png"  alt=""/>
 		</a>
 	</h2>
 
@@ -40,11 +61,9 @@
 		  </h3>
 		  
 		  <h3 class="character" style="float:left" >
-			  <img class="left_arr" src="Logo/left_arrow.png"  alt=""/> 
-			  <img class="char1" src="Logo/Character_1.png" alt=""/> 
-			  <a href="MainPage_AfterLogin_character2.html">
-				<img class="right_arr" src="Logo/right_arrow.png" alt=""/>
-			  </a>
+			<img class="left_arr" onclick="leftChangeImg()" src="Logo/left_arrow.png"  alt=""/> 
+			<img id="character" class="char1" src="Logo/Character_1.png" alt=""/> 
+			<img class="right_arr" onclick="rightChangeImg()" src="Logo/right_arrow.png" alt=""/>
 		  </h3>
 		  
 		  <h3 class="figure2" style="float:right">

@@ -1,3 +1,7 @@
+﻿html{
+		font-family:"배달의민족 한나";
+}
+
 .container{
 	margin-bottom: 0;
 	margin-left: 0;
@@ -5,7 +9,7 @@
 	margin-top: 0;
 	background-color: #EDF6F9;
 	width: 100%;
-	height: 80%;
+	height: 50%;
 }
 
 .primary_header {
@@ -25,6 +29,7 @@
 	margin: auto;
 	z-index: +3;
 }
+
 
 .image_grass{
 	position: absolute;
@@ -53,6 +58,13 @@
 	overflow: auto;
 	background: #EDF6F9;
 	position: relative;	
+}
+
+.character{
+	position: absolute;
+	z-index=+5;
+	top:10%;
+	left: 10%;
 }
 
 .figure{
@@ -123,6 +135,18 @@
 	z-index: +3;
 }
 
+.timeToDraw{
+	position: absolute;
+	top: 56%;
+	left: 40%;
+	z-index: +5;
+}
+
+.blank2Container{
+	position: relative;
+	text-align: center;
+}
+
 .blank2{
 	position: absolute;
 	top: 60%;
@@ -131,6 +155,13 @@
 	height: 25%;
 	margin: auto;
 	z-index: +3;
+}
+
+.roundNumber{
+	position: absolute;
+	top: 5%;
+	left: 40%;
+	z-index: +5;
 }
 
 .up{
@@ -194,6 +225,16 @@
 	height: 34%;
 	margin: auto;
 	z-index: +2;
+	
+}
+
+.character2{
+	position: absolute;
+	top:50%;
+	left: 22%;
+	width: 39%;
+	margin: auto;
+	z-index: +4;
 	
 }
 

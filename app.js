@@ -47,7 +47,7 @@ app.use('/Logo', express.static('./static/Logo'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
-  fs.readFile('./static/MainPage_character1.html', function(err, data) {
+  fs.readFile('./static/MainPage.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else {
@@ -58,7 +58,6 @@ app.get('/', function(request, response) {
     }
   })
 })
-
 
 app.get('/MakeRoom/:id', function(request, response) {
   fs.readFile('./static/MakeRoom.html', function(err, data) {
@@ -75,7 +74,7 @@ app.get('/MakeRoom/:id', function(request, response) {
 
 
 app.get('/Game/:id', function(request, response) {
-  fs.readFile('./static/Game.html', function(err, data) {
+  fs.readFile('./static/Game2.html', function(err, data) {
     if(err) {
       response.send('에러')
     } else if(sessions[request.sessionID] != request.params.id) {
@@ -95,7 +94,7 @@ io.sockets.on('connection', function(socket) {
 
   /* 새로운 유저가 접속 */
   socket.on('newUser', function(name) {
-    console.log(name + ' 님이 접속하였습니다.')
+    //console.log(name + ' 님이 접속하였습니다.')
 
     /* 소켓과 세션에 이름 저장해두기 */
     socket.name = name;
@@ -227,36 +226,6 @@ server.listen(8080, function() {
 })  
 
 
-var mongoose = require('mongoose');
-
-// [ CONFIGURE mongoose ]
-
-// CONNECT TO MONGODB SERVER
-var db = mongoose.connection;
-db.on('error', console.error);
-db.once('open', function(){
-    // CONNECTED TO MONGODB SERVER
-    console.log("Connected to mongod server");
-});
-
-mongoose.connect('mongodb://localhost/remind');
-
-var Word = require('./models/word');
-//var router = require('./router')(app, Book);
-
-function Getaword(){
-  Word.count(function(err, count){
-    if(err) console.log('get a word error: count');
-    var rand = Math.floor(Math.random() * count);
-    Word.findOne().skip(rand).exec(
-      function (err, result){
-        //console.log(result);
-        return result;
-      })
-  })
-}
-
-Getaword();
 
 const twitch = require('./router/twitchconfig');
 
@@ -328,7 +297,8 @@ setInterval(function(){
 },1000)
 */
 
+const Word = require('./router/newworddb');
 
-
+var test = Word.Getwords(3);
 
 
