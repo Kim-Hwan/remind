@@ -112,7 +112,9 @@ io.sockets.on('connection', function(socket) {
     socket.name = socket.handshake.session.userName;    // 이름 백업
 
     //새로 로드된 MakeRoom.html 초기화
-    socket.emit('init_MakeRoom', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
+    socket.emit('init_MakeRoom', {  ishost: !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]),
+                                    roomsid: roomsid
+    });
   })
 
   /* 새로운 유저가 참가 */
@@ -147,6 +149,12 @@ io.sockets.on('connection', function(socket) {
     if(lobbyManager.gameLobbys[data.PW]) {
       socket.emit('nextPage', 'MakeRoom/' + data.PW)
     }
+  })
+
+  socket.on('update_MakeRoom', function(data) {
+    var sid = socket.handshake.sessionID;       // 전송받은 메세지가 보내진 세션id
+    var roomsid = sessions[sid];                   // 전송받은 메세지가 보내질 룸의 세션ID  
+    socket.broadcast.to(roomsid).emit('update_MakeRoom', data);
   })
 
   // MakeRoom.html의 host가 보낸 start 요청

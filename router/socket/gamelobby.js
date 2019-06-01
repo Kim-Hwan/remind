@@ -41,7 +41,7 @@ GameLobby.prototype.initGame = function(maxRound, maxTime) {
 	self.maxTime = maxTime;
 	self.timeNum = self.maxTime;
 	self.roundNum = 0;
-	self.drawerNum = 0;
+	self.drawerNum = -1;
 	self.drawer = null;
 
 	for(var i = 0 ; i < 6 ; i++)

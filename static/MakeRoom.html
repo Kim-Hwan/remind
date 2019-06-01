@@ -22,42 +22,6 @@
 		document.getElementById('character2').src = "/Logo/"+images[player%size];
 	}
 
-	function roundUp(){
- 		if(!ishost)
-    		return
-		var text = document.getElementById("proundNumber").textContent;
-		if(text=="9")
-			return;
-		var number = Number(text) + 1;
-		document.getElementById("proundNumber").innerHTML = String(number);
-	}
-	function roundDown(){
- 		if(!ishost)
-    		return
-		var text = document.getElementById("proundNumber").textContent;
-		if(text=="1")
-			return;
-		var number = Number(text) - 1;
-		document.getElementById("proundNumber").innerHTML = String(number);
-	}
-	function ttdUp(){
- 		if(!ishost)
-    		return
-		var text = document.getElementById("ptimeToDraw").textContent;
-		if(text=="90")
-			return;
-		var number = Number(text) + 10;
-		document.getElementById("ptimeToDraw").innerHTML = String(number);
-	}
-	function ttdDown(){
- 		if(!ishost)
-    		return
-		var text = document.getElementById("ptimeToDraw").textContent;
-		if(text=="0")
-			return;
-		var number = Number(text) - 10;
-		document.getElementById("ptimeToDraw").innerHTML = String(number);
-	}
 </script>
 
 </head>
@@ -79,8 +43,8 @@
 			
 			<img class="blank" src="/Logo/Blank.png" alt=""/>
 
-			<img id="up" class="up" onclick="roundUp();" src="/Logo/up.png" alt=""/> 
-		  	<img id="down" class="down" onclick="roundDown()" src="/Logo/down.png" alt=""/> 
+			<img id="up" class="up" onclick="incRound();" src="/Logo/up.png" alt=""/> 
+		  	<img id="down" class="down" onclick="decRound()" src="/Logo/down.png" alt=""/> 
             	
 
 			<div class="timeToDraw">
@@ -97,8 +61,8 @@
 			</div>
 
 
-			<img id="up2" class="up1" onclick="ttdUp()" src="/Logo/up.png" alt=""/> 
-		  	<img id="down2" class="down2" onclick="ttdDown()" src="/Logo/down.png" alt=""/> 
+			<img id="up2" class="up1" onclick="incTime()" src="/Logo/up.png" alt=""/> 
+		  	<img id="down2" class="down2" onclick="decTime()" src="/Logo/down.png" alt=""/> 
 			<!--<a href="Game.html">-->
 			<a>
 		  	<!--<img class="start_game" src="/Logo/start_game.png"  alt=""/> </h2>-->

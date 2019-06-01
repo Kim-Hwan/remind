@@ -229,12 +229,16 @@ function send(message) {
   }
 
   function touchstartf(){
+    if (drawturn == 0) return;
+
     gettouchpos();
     drawline(touchX-1,touchY,touchX,touchY,linewidth,linecolor);
     event.preventDefault();
   }
 
   function touchmovef(e){
+    if (drawturn == 0) return;
+
     var x1 = touchX;
     var y1 = touchY;
     gettouchpos(e);
