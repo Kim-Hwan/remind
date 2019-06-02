@@ -16,7 +16,7 @@ socket.on('nextPage', function(data) {
 }) 
 
 // 방만들기 버튼 클릭
-function makeLobby(Password) {
+function makeLobby() {
   socket.emit('makeLobby');
   //location.href = "/client/MakeRoom.html";
 }
@@ -24,10 +24,10 @@ function makeLobby(Password) {
 
 
 // 시작 버튼 클릭
-function joinLobby(Password) {
-  lobbyPW = Password
-  socket.emit('joinLobby', {type: 'joinLobby', PW: lobbyPW});
+function fastStart() {
+  socket.emit('fastStart');
 }
+
 
 
 // 캐릭터 변경 화살표 버튼 클릭

@@ -1,10 +1,11 @@
 var GameLobby = require('./gamelobby');
 
-function LobbyManager(socketio) {
+function LobbyManager(socketio, word) {
 	var self = this;
 
 	self.gameLobbys = {};
 	self.io = socketio;
+	self.word = word;
 
 }
 
@@ -39,7 +40,8 @@ LobbyManager.prototype.makeLobby = function(socket) {
 	let gamelobby = new GameLobby({	//lobbyPW: info.PW, 
 									host: socket.handshake.sessionID,
 									socket: socket,
-									io: self.io
+									io: self.io,
+									word: self.word.Getwords(100)
 									});
 
 	console.log('make lobby!! ' + gamelobby.host );
@@ -60,6 +62,7 @@ LobbyManager.prototype.joinLobby = function(socket, sessionID) {
 	// 로비가 존재하지 않음
 	if(!targetLobby) {
 		console.log('lobby not find!!');
+		socket.emit('wrongAccess');
 		return -1;
 	}
 
@@ -79,6 +82,18 @@ LobbyManager.prototype.joinLobby = function(socket, sessionID) {
 
 }
 
+// 로비 빠른 참가가 가능한가 (fastStart에서 호출)
+LobbyManager.prototype.canJoinLobby = function() {
+	var self = this;
+
+	for(var i in self.gameLobbys) {
+		var lobby = self.gameLobbys[i]
+		if(lobby.canJoin())
+			return i;
+	}
+
+	return 0;
+}
 
 // 로비 시작 함수
 LobbyManager.prototype.startLobby = function(sessionID, option) {
