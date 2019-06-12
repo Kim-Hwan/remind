@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>MainPage with 꼬물1</title>
+	<link href="/css/MainPage.css" rel="stylesheet" type="text/css">
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/js/MainPage.js"></script>
+
+	<script type="text/javascript">
+
+		var images = new Array("Character_3.png", "Character_2.png", "Character_1.png");
+		var i=5;
+		var size=3;
+		function makeRoomFunction(){
+			var temp = document.getElementById("makeRoom");
+//			var question="%3F";
+//			var equal="%3D";
+			temp.href+="?player="+String(i);
+			makeLobby();
+		}
+		function rightChangeImg(){
+			var img1=document.getElementById('character');
+			img1.src="/Logo/"+images[(++i) % size];
+		}
+		function leftChangeImg(){
+			if(i==0)
+				i+=size;
+			var img1=document.getElementById('character');
+			img1.src="/Logo/"+images[(--i) % size];
+		}
+
+	</script>
+
+</head>
+
+<body>
+	<div class="container">
+	<header>
+		<div class="primary_header"> 
+			<img class="img_logo" src="/Logo/RE-MIND_logo.png" alt=""/>
+			<nav class="secondary_header" id="menu"> </nav>
+		</div>
+	</header>
+
+	<section>
+		<h2 class="cloud">
+			<h2 class="cloud1" style="float:left" >
+			<img class="img_cloud" src="/Logo/클라우드.png"  alt=""/> 
+			<!--<a href="Login.html"><img class="img_login" src="/Logo/로그인.png"  alt=""/></a>-->
+			<img class="img_login" id="login_test" src="/Logo/로그인.png"  alt=""/>////
+		</h2>
+		<h2 class="cloud2" style="float:left">
+
+		    <a>
+				<img class="img_start"  onclick="fastStart()" src="/Logo/시작.png"  alt=""/> 
+			</a>
+
+			<img class="img_cloud2" src="/Logo/cloud2.png"  alt=""/>
+
+			<!--<a id="makeRoom" href="MakeRoom.html">-->
+			<a id="makeRoom">
+        		<img class="img_room" onclick="makeLobby()" src="/Logo/Room.png"  alt=""/> </h2>
+			</a>
+
+	  	</h2>
+	  	
+	 	<h3 class="figure" style="clear:both">
+			<h3 class="figure1" style="float:left">
+	  	  		<img class="img_fig1" src="/Logo/Fig1.png"  alt=""/> 
+		  	  	<img class="img_fig2" src="/Logo/Fig2.png"  alt=""/>
+			</h3>
+		</h3>
+
+		<h3 class="character" style="float:left" >
+			<img class="left_arr" onclick="leftChangeImg()" src="/Logo/left_arrow.png"  alt=""/> 
+			<img id="character" class="char1" src="/Logo/Character_1.png" alt=""/> 
+			<img class="right_arr" onclick="rightChangeImg()" src="/Logo/right_arrow.png" alt=""/>
+		 </h3>
+		  
+		  <h3 class="figure2" style="float:right">
+	  	  	<img class="img_fig3" src="/Logo/Fig3.png" alt=""/> 
+	  		<img class="img_fig4" src="/Logo/Fig4.png" alt=""/> 
+		  </h3>
+
+	</section>
+<div class="main" style="clear:both"> </div>
+<footer class="secondary_header footer">
+	<img class="image_grass" src="/Logo/Grass.png" alt=""/>  
+	<div class="copyright">&copy;2019 - REMIND</div>
+ </footer>
+</div>
+<script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-auth.js"></script>
+<script src="/js/firebase.js"></script>
+</body>
+</html>

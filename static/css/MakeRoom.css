@@ -10,6 +10,7 @@
 	background-color: #EDF6F9;
 	width: 100%;
 	height: 50%;
+    
 }
 
 .primary_header {
@@ -338,7 +339,13 @@
 	letter-spacing: 2px;
 }
 
-
+#copyButton{
+        position: absolute;
+        left: 122%;
+        top: 65%;
+        height: 35px;
+        z-index: +5;
+    }
 
 .column_title {
 	padding-top: 25px;

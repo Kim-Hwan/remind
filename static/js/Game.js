@@ -1,13 +1,16 @@
 var socket = io()
 var ishost = 0;
-var players = {}
+var player = null
 
 socket.on('connect', function() {
   socket.emit('newUser_Game')
 })
 
 socket.on('init_Game', function(data) {
-  ishost = data
+  ishost = data.ishost;
+  player = 'player' + String(data.player)
+  console.log(player);
+  startbutton();
 })
 
 
@@ -25,11 +28,16 @@ socket.on('update_Game_score', function(data) {
 
 socket.on('update_Game_round', function(data) {
   console.log("현재 라운드 정보: " + data)
+  document.getElementById("answerword").innerHTML = '';
+  document.getElementById("mineword").innerHTML = '';
   drawturn = 0;
 })
 
 socket.on('update_Game_round_yourdrawturn', function(data) {
-  console.log("내 그림 차례입니다, 제시어: " + data)
+  //console.log("내 그림 차례입니다, 제시어: " + data)
+  document.getElementById("answerword").innerHTML = data.answerword;
+  document.getElementById("mineword").innerHTML = data.mineword;
+
   drawturn = 1;
 })
 
@@ -39,7 +47,10 @@ socket.on('update_Game_round_yourdrawturn', function(data) {
 
 
 
-
+socket.on('wrongAccess', function() {
+  console.log('wrongAccess');
+  location.href = '../';
+})
 
 socket.on('ended_Game', function(data) {
   location.href = '../MakeRoom/' + data;
@@ -70,7 +81,7 @@ socket.on('update', function(data) {
   }
 */
   console.log(data.name + ": " + data.message);
-
+  makes(data.player, data.message);
   //message.classList.add(className)
   //message.appendChild(node)
   //chat.appendChild(message)
@@ -105,7 +116,8 @@ function send(message) {
   //console.log(io.sockets.manager.rooms)
 
   // 서버로 message 이벤트 전달 + 데이터와 함께
-  socket.emit('message', {type: 'message', message: message, name: socket.name});
+  socket.emit('message', {type: 'message', message: message, name: socket.name, player: player});
+  //makes(player, message);
 }
 
 // more paint

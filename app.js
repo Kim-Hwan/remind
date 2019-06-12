@@ -28,9 +28,12 @@ const server = http.createServer(app)
 /* 생성된 서버를 socket.io에 바인딩 */
 const io = socket(server)
 
+// word 불러오기 및 객체 생성
+const Word = require('./router/newworddb');
+
 // 로비매니저 불러오기 및 객체 생성
 var LobbyManager = require('./router/socket/lobbymanager');
-var lobbyManager = new LobbyManager(io);
+var lobbyManager = new LobbyManager(io, Word);
 
 // 데이터베이스 대체 배열
 var sessions = {};
@@ -124,17 +127,25 @@ io.sockets.on('connection', function(socket) {
     var roomsid = sessions[sid];                   // 전송받은 메세지가 보내질 룸의 세션ID
     var lobby = lobbyManager.gameLobbys[roomsid];   // 전송받은 메세지가 보내질 로비
 
+    if(!lobby) {
+      socket.emit('wrongAccess');
+      return;
+    }
+
     socket.join(roomsid);  // 소켓 룸 조인
     socket.name = socket.handshake.session.userName;    // 이름 백업
 
     if(lobby)
       lobby.reconnectSocket(socket);
+
     //새로 로드된 Game.html 초기화
-    socket.emit('init_Game', !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]));
+    socket.emit('init_Game', {ishost: !!(socket.handshake.sessionID == sessions[socket.handshake.sessionID]), 
+                              player: lobby.playerNum(sid)
+    });
   })
 
   // 방만들기 요청
-  socket.on('makeLobby', function(data) {
+  socket.on('makeLobby', function() {
     // 로비매니저에게 로비 생성 요청
     lobbyManager.makeLobby(socket)
 
@@ -144,12 +155,21 @@ io.sockets.on('connection', function(socket) {
   })
 
   // 방참가 요청
-  socket.on('joinLobby', function(data) {
-    // 로비매니저에게 로비 참가 요청
-    if(lobbyManager.gameLobbys[data.PW]) {
-      socket.emit('nextPage', 'MakeRoom/' + data.PW)
+  socket.on('fastStart', function() {
+    var roomsid = lobbyManager.canJoinLobby()
+    if(roomsid) {
+      socket.emit('nextPage', 'MakeRoom/' + roomsid)
+    }
+    else {
+      // 로비매니저에게 로비 생성 요청
+      lobbyManager.makeLobby(socket)
+
+      // 클라이언트에게 페이지 업데이트 요청
+      socket.emit('nextPage', 'MakeRoom/' + socket.handshake.sessionID)
     }
   })
+
+  
 
   socket.on('update_MakeRoom', function(data) {
     var sid = socket.handshake.sessionID;       // 전송받은 메세지가 보내진 세션id
@@ -183,7 +203,7 @@ io.sockets.on('connection', function(socket) {
       return
 
     // 전송받은 메세지가 현 라운드의 정답이라면,
-    if(lobby.isAnwser(data.message)) {
+    if(lobby.isAnswer(data.message)) {
       lobby.incScore(sid);
       //emit
     }
@@ -305,7 +325,7 @@ setInterval(function(){
 },1000)
 */
 
-const Word = require('./router/newworddb');
+//const Word = require('./router/newworddb');
 
 var test = Word.Getwords(3);
 

@@ -27,6 +27,11 @@ socket.on('startLobby', function(data) {
   location.href = '../Game/' + data;
 })
 
+socket.on('wrongAccess', function() {
+  console.log('wrongAccess');
+  location.href = '../';
+})
+
 
 /* 시작 함수 */
 function start(maxRound, maxTime) {

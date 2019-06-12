@@ -12,13 +12,18 @@ appId: "1:351620337453:web:0f93d3a9afb44d37"
 firebase.initializeApp(firebaseConfig);
 
 
+document.querySelector('#login_test').addEventListener('click', function (e) {
 
+    var buttonChanger = document.getElementById("login_test");
+    if (!buttonChanger) {
+        buttonChanger = document.getElementById("logout_test");
+        buttonChanger.src = "/Logo/login.png";
+        buttonChanger.id = "login_test";
+        console.log(buttonChanger.src);
+        return;
+    }
+        
 
-
-
-
-
-document.querySelector('#login_test').addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -61,7 +66,8 @@ document.querySelector('#login_test').addEventListener('click', function(e) {
 
 
 
-    firebase.auth().signInWithPopup(provider).then(function (result){
+    firebase.auth().signInWithPopup(provider).then(function (result) {
+
         var token = result.credential.accessToken;
         var user = result.user;
         user.providerData.forEach(function (profile) {
@@ -79,7 +85,18 @@ document.querySelector('#login_test').addEventListener('click', function(e) {
 
         //console.log(token);
         //console.log(user);
-        //console.log(UID);
+        console.log(UID);
         console.log(nameFromProvider);
+        //window.location.href = '';
+        //var buttonChanger = document.getElementById("login_test");
+
+        var buttonChanger;
+        if (buttonChanger = document.getElementById("login_test")) {
+            buttonChanger.src = "/Logo/logout.png";
+            buttonChanger.id = "logout_test";
+            sessions.append(nameFromProvider);
+        }
+
     });
-  });
+});
+
